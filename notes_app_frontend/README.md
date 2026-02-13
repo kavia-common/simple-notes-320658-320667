@@ -1,82 +1,118 @@
-# Lightweight React Template for KAVIA
+# Notes App (React, local-only)
 
-This project provides a minimal React template with a clean, modern UI and minimal dependencies.
+A lightweight single-page notes app that runs entirely in the browser. Notes are stored locally using `localStorage` and require no backend or authentication.
 
 ## Features
 
-- **Lightweight**: No heavy UI frameworks - uses only vanilla CSS and React
-- **Modern UI**: Clean, responsive design with KAVIA brand styling
-- **Fast**: Minimal dependencies for quick loading times
-- **Simple**: Easy to understand and modify
+The current app supports the following behavior:
 
-## Getting Started
+### Note management
 
-In the project directory, you can run:
+Users can create, edit, and delete notes.
 
-### `npm start`
+A note has the following fields:
 
-Runs the app in development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- `id`
+- `title`
+- `content`
+- `createdAt`
+- `updatedAt`
 
-### `npm test`
+### Draft editor with explicit save
 
-Launches the test runner in interactive watch mode.
+Edits are made in a draft state and are not persisted until the user saves.
 
-### `npm run build`
+The UI shows whether there are unsaved changes. Users can also discard changes to revert the draft back to the last saved version.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+A keyboard shortcut is supported:
 
-## Customization
+- `Ctrl+S` / `Cmd+S`: Save the current note
 
-### Colors
+### Search
 
-The main brand colors are defined as CSS variables in `src/App.css`:
+The sidebar includes a search input that filters notes by matching the query against the note title and content.
 
-```css
-:root {
-  --kavia-orange: #E87A41;
-  --kavia-dark: #1A1A1A;
-  --text-color: #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.7);
-  --border-color: rgba(255, 255, 255, 0.1);
-}
+### Sorting
+
+Notes are shown sorted by `updatedAt` (most recently updated first).
+
+## Local storage behavior
+
+Notes are persisted in the browser via `localStorage` under this key:
+
+- `simple-notes.notes.v1` (see `src/App.js`)
+
+On startup, the app loads the array of notes from this key, normalizes the shape, sorts by `updatedAt`, and automatically selects the most recently updated note (if any exist).
+
+When the notes state changes, the app writes the full notes array back to `localStorage`.
+
+Clearing site data for the app origin will permanently remove saved notes.
+
+## Tech stack
+
+This project is a Create React App-based frontend:
+
+- React 18
+- `react-scripts` (CRA) for dev server, build, and test
+
+There is no backend dependency.
+
+## Setup
+
+### Prerequisites
+
+- Node.js (LTS recommended)
+- npm
+
+### Install and run
+
+From `notes_app_frontend/`:
+
+```bash
+npm install
+npm start
 ```
 
-### Components
+Open `http://localhost:3000`.
 
-This template uses pure HTML/CSS components instead of a UI framework. You can find component styles in `src/App.css`. 
+## Available scripts
 
-Common components include:
-- Buttons (`.btn`, `.btn-large`)
-- Container (`.container`)
-- Navigation (`.navbar`)
-- Typography (`.title`, `.subtitle`, `.description`)
+From `notes_app_frontend/`:
 
-## Learn More
+### Development server
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```bash
+npm start
+```
 
-### Code Splitting
+Starts the CRA dev server.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Production build
 
-### Analyzing the Bundle Size
+```bash
+npm run build
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Builds to the `build/` directory.
 
-### Making a Progressive Web App
+### Tests
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+```bash
+npm test
+```
 
-### Advanced Configuration
+Runs the test runner (watch mode when a TTY is available).
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+If you need a non-interactive CI run, you can use:
 
-### Deployment
+```bash
+CI=true npm test
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## Repository structure (frontend)
 
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- `public/`: HTML template and static assets
+- `src/App.js`: Notes application logic (create, edit, save, discard, delete, search, persistence)
+- `src/App.css`: App styling (light, modern theme)
+- `src/App.test.js`: Basic render test
+- `src/setupTests.js`: Jest DOM matchers setup
